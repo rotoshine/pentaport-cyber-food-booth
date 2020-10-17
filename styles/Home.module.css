@@ -143,7 +143,7 @@
 }
 
 .header {
-  background-image: url('http://www.pentaport.co.kr/kor/images/main_img1.jpg');
+  background-image: url('/main_img1.jpg');
   background-size: cover;
   background-position: center;
   width: 100%;
