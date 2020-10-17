@@ -1,20 +1,28 @@
-import { GetServerSideProps } from 'next'
+/** @jsx jsx */
+import { jsx, css } from '@emotion/core'
+import { GetStaticPaths, GetStaticProps } from 'next'
+import Head from 'next/head'
 import Link from 'next/link'
-import React, { FormEvent, useState } from 'react'
-import { Helmet } from 'react-helmet'
+import { FormEvent, useState } from 'react'
 import Modal from 'react-modal'
 
 import Layout from '../../components/Layout'
+import { getFullPath } from '../../utils/image'
 import { Menu, Store } from '../../types/model'
+import { findAllStores, findStoreById } from '../../utils/api'
 
 interface Props {
-  store: Store
+  store?: Store
 }
 
 export default function StorePage({ store }: Props) {
   const [visibleOrderModal, setVisibleOrderModal] = useState(false)
   const [selectedMenu, setSelectedMenu] = useState<Menu | null>(null)
   const [orderUsername, setOrderUsername] = useState('')
+
+  if (!store) {
+    return <div>Loading..</div>
+  }
 
   const handleMenuClick = (menu: Menu) => {
     setVisibleOrderModal(true)
@@ -48,89 +56,148 @@ export default function StorePage({ store }: Props) {
   }
   return (
     <Layout>
-      <Helmet>
+      <Head>
         <title>Cyber Food Booth - {store.title}</title>
+        <meta name="description" content={`펜타포트 사이버 푸드 부스 - ${store.title}`} />
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:site" content="@nytimesbits" />
         <meta name="twitter:creator" content="@nickbilton" />
         <meta property="og:url" content={`https://pentaport-cyber-food-booth.vercel.app/stores/${store.id}`} />
         <meta property="og:title" content={`Cyber Food Booth - ${store.title}`} />
         <meta property="og:description" content="먹어보고 말해! 츄라이츄라이!" />
-        <meta property="og:image" content={`https://pentaport2020foods.roto.codes${store.storeImage.url}`} />
-      </Helmet>
+        <meta property="og:image" content={getFullPath(store.storeImage.url)} />
+      </Head>
       {visibleOrderModal && selectedMenu && (
         <Modal
           isOpen={visibleOrderModal}
-          style={{
-            content: {
-              maxWidth: 500,
-              width: '100%',
-              top: '50%',
-              left: '50%',
-              right: 'auto',
-              bottom: 'auto',
-              marginRight: '-50%',
-              transform: 'translate(-50%, -50%)',
-            },
-          }}
+          css={css`
+            background-color: #fff;
+            padding: 1rem;
+            border: 1px solid #ccc;
+            max-width: 500px;
+            width: 80%;
+            height: auto;
+            top: 50%;
+            left: 50%;
+
+            transform: translate(-50%, -50%);
+            position: relative;
+          `}
         >
           <h2>주문 확인</h2>
           <div>
-            <strong>주문하시겠습니까? 메뉴명: {selectedMenu.name}</strong>
+            <div>
+              <p>주문하시겠습니까?</p>
+              <p>메뉴명: {selectedMenu.name}</p>
+              <p>가격: {selectedMenu.price}원</p>
+            </div>
           </div>
           <form onSubmit={handleOrder}>
             <div>
               <input
-                style={{
-                  width: '100%',
-                  fontSize: 40,
-                }}
+                css={css`
+                  width: 100%;
+                  font-size: 2rem;
+
+                  @media (max-width: 440px) {
+                    font-size: 1rem;
+                  }
+                `}
                 placeholder="주문자 이름을 적어주세요"
                 onChange={e => setOrderUsername(e.target.value)}
               />
             </div>
             <div>
-              <button style={{ width: '100%' }} type="submit">
+              <button
+                css={css`
+                  width: 100%;
+                `}
+                type="submit"
+                disabled={orderUsername.length === 0}
+              >
                 주문하기
               </button>
             </div>
           </form>
           <button
-            disabled={orderUsername.length === 0}
+            css={css`
+              position: absolute;
+              top: 20px;
+              right: 20px;
+            `}
             onClick={() => {
               setVisibleOrderModal(false)
               setSelectedMenu(null)
             }}
           >
-            취소
+            X
           </button>
         </Modal>
       )}
       <h1>{store.title}</h1>
-      <div style={{ display: 'flex', width: '100%', maxWidth: 1000, flexDirection: 'row' }}>
+      <div
+        css={css`
+          display: flex;
+          width: 100%;
+          max-width: 1000px;
+          flex-direction: row;
+
+          @media (max-width: 440px) {
+            flex-direction: column;
+          }
+        `}
+      >
         <div>
-          <img style={{ width: '100%' }} src={`https://pentaport2020foods.roto.codes${store.storeImage.url}`} />
+          <img
+            css={css`
+              width: 100%;
+            `}
+            src={`${getFullPath(store.storeImage.url)}`}
+          />
         </div>
         {store.qrcode && (
           <div>
-            <img style={{ width: '100%' }} src={`https://pentaport2020foods.roto.codes${store.qrcode?.url}`} />
+            <img
+              css={css`
+                width: 100%;
+              `}
+              src={`${getFullPath(store.qrcode.url)}`}
+            />
           </div>
         )}
       </div>
-      <ul>
+      <ul
+        css={css`
+          padding: 0;
+        `}
+      >
         {store.menus?.map(menu => (
           <li
-            style={{
-              border: '1px solid #ccc',
-              padding: 10,
-              listStyle: 'none',
-              fontFamily: 'NEXON Lv2 Gothic Bold',
-              fontSize: 40,
-              marginTop: 10,
-            }}
+            css={css`
+              border: 1px solid #ccc;
+              padding: 1rem;
+              list-style: none;
+              font-family: 'NEXON Lv2 Gothic Bold';
+              font-size: 4rem;
+              margin-top: 1px;
+              display: flex;
+              flex-direction: row;
+              justify-content: space-between;
+              @media (max-width: 440px) {
+                font-size: 1rem;
+                width: 100%;
+              }
+              margin-top: 0.5rem;
+              cursor: pointer;
+
+              &:hover {
+                background-color: #eee;
+              }
+            `}
             onClick={() => handleMenuClick(menu)}
           >
-            {menu.name} / {menu.price && menu.price > 0 ? `${menu.price}원` : '무료!!'}
+            <div>{menu.name}</div>
+            <div>{menu.price && menu.price > 0 ? `${menu.price}원` : '무료!!'}</div>
           </li>
         ))}
       </ul>
@@ -139,13 +206,29 @@ export default function StorePage({ store }: Props) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getStaticPaths: GetStaticPaths = async () => {
+  const stores = await findAllStores()
+
+  const paths = stores.map(store => ({
+    params: { id: store.id },
+  }))
+
+  console.log(paths)
+
+  return { paths, fallback: true }
+}
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { id } = params
-  const res = await fetch(`https://pentaport2020foods.roto.codes/stores/${id}`)
-  const store = await res.json()
-  return {
-    props: {
-      store,
-    },
+  try {
+    const store = await findStoreById(id as string)
+    return {
+      props: {
+        store,
+      },
+      revalidate: 10,
+    }
+  } catch (e) {
+    console.log(e)
   }
 }
