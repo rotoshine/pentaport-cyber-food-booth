@@ -3,14 +3,14 @@ import Link from 'next/link'
 import React from 'react'
 import { Helmet } from 'react-helmet'
 import Layout from '../../components/Layout'
-import { Store } from '../../types/model'
+import { Menu, Store } from '../../types/model'
 
 interface Props {
   store: Store
 }
 
 export default function StorePage({ store }: Props) {
-  const handleMenuClick = () => {}
+  const handleMenuClick = (menu: Menu) => {}
 
   return (
     <Layout>
