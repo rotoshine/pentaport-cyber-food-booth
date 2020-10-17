@@ -1,9 +1,9 @@
 import { GetStaticProps } from 'next'
-import styles from '../styles/Home.module.css'
 import Link from 'next/link'
 import Layout from '../components/Layout'
 
 import { Store } from '../types/model'
+import styled from '@emotion/styled'
 
 interface Props {
   stores: Store[]
@@ -12,17 +12,19 @@ interface Props {
 export default function Home({ stores }: Props) {
   return (
     <Layout>
-      <h1>Cyber Food Booth 🍔</h1>
-      <div className={styles.grid}>
-        {stores?.map(store => (
-          <Link href={`/store/${store.id}`}>
-            <div className="item">
-              <img src={`https://pentaport2020foods.roto.codes${store.storeImage.url}`} />
-              <div>{store.title}</div>
-            </div>
-          </Link>
-        ))}
-      </div>
+      <Styled>
+        <h1>Cyber Food Booth 🍔</h1>
+        <div className="grid">
+          {stores?.map(store => (
+            <Link href={`/store/${store.id}`}>
+              <div className="item">
+                <img src={`https://pentaport2020foods.roto.codes${store.storeImage.url}`} />
+                <div>{store.title}</div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </Styled>
     </Layout>
   )
 }
@@ -36,3 +38,35 @@ export const getStaticProps: GetStaticProps = async () => {
     },
   }
 }
+
+const Styled = styled.div`
+  .grid {
+    display: grid;
+    width: 100%;
+    row-gap: 10px;
+    column-gap: 10px;
+    grid-template-columns: repeat(4, 1fr);
+
+    @media (max-width: 768) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @media (max-width: 440px) {
+      grid-template-columns: repeat(1, 1fr);
+    }
+  }
+
+  .grid .item {
+    width: 250px;
+    padding: 10px;
+  }
+
+  .grid .item:hover {
+    background-color: #e6f7ff;
+  }
+
+  .grid img {
+    object-fit: contain;
+    width: 250px;
+    height: 300px;
+  }
+`
