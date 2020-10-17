@@ -58,7 +58,7 @@ export default function StorePage({ store }: Props) {
     <Layout>
       <Head>
         <title>Cyber Food Booth - {store.title}</title>
-        <meta name="description" content={`펜타포트 사이버 푸드 부스 - ${store.title}`} />
+        <meta name="description" content="먹어보고 말해! 츄라이츄라이!" />
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:site" content="@nytimesbits" />
         <meta name="twitter:creator" content="@nickbilton" />
@@ -153,10 +153,23 @@ export default function StorePage({ store }: Props) {
               width: 100%;
             `}
             src={`${getFullPath(store.storeImage.url)}`}
+            alt={`${store.title}의 가게 포스터`}
           />
         </div>
         {store.qrcode && (
-          <div>
+          <div
+            css={css`
+              width: 30rem;
+
+              @media (max-width: 768px) {
+                flex: 1;
+              }
+
+              @media (max-width: 440px) {
+                width: 100%;
+              }
+            `}
+          >
             <img
               css={css`
                 width: 100%;
@@ -173,6 +186,7 @@ export default function StorePage({ store }: Props) {
       >
         {store.menus?.map(menu => (
           <li
+            key={menu.id}
             css={css`
               border: 1px solid #ccc;
               padding: 1rem;
@@ -212,8 +226,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const paths = stores.map(store => ({
     params: { id: store.id },
   }))
-
-  console.log(paths)
 
   return { paths, fallback: true }
 }
