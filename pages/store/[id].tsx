@@ -1,6 +1,7 @@
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import React from 'react'
+import { Helmet } from 'react-helmet'
 import Layout from '../../components/Layout'
 import { Store } from '../../types/model'
 
@@ -9,8 +10,20 @@ interface Props {
 }
 
 export default function StorePage({ store }: Props) {
+  const handleMenuClick = () => {}
+
   return (
     <Layout>
+      <Helmet>
+        <title>Cyber Food Booth - {store.title}</title>
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:site" content="@nytimesbits" />
+        <meta name="twitter:creator" content="@nickbilton" />
+        <meta property="og:url" content={`https://pentaport-cyber-food-booth.vercel.app/stores/${store.id}`} />
+        <meta property="og:title" content={`Cyber Food Booth - ${store.title}`} />
+        <meta property="og:description" content="먹어보고 말해! 츄라이츄라이!" />
+        <meta property="og:image" content={`https://pentaport2020foods.roto.codes${store.storeImage.url}`} />
+      </Helmet>
       <h1>{store.title}</h1>
       <div style={{ display: 'flex', width: '100%', maxWidth: 1000, flexDirection: 'row' }}>
         <div>
@@ -33,8 +46,9 @@ export default function StorePage({ store }: Props) {
               fontSize: 40,
               marginTop: 10,
             }}
+            onClick={() => handleMenuClick(menu)}
           >
-            {menu.name} / {menu.price}원
+            {menu.name} / {menu.price && menu.price > 0 ? `${menu.price}원` : '무료!!'}
           </li>
         ))}
       </ul>

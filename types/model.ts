@@ -15,3 +15,9 @@ export interface Menu {
 export interface Image {
   url: string
 }
+
+export interface Order {
+  id: string
+  username: string
+  menu: Menu
+}
