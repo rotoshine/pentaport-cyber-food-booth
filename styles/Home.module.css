@@ -1,12 +1,3 @@
-.container {
-  min-height: 100vh;
-  padding: 0 0.5rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
 .main {
   padding: 5rem 0;
   flex: 1;
@@ -62,13 +53,17 @@
   font-size: 1.5rem;
 }
 
+.container {
+  display: flex;
+  flex-direction: column;
+}
 .code {
   background: #fafafa;
   border-radius: 5px;
   padding: 0.75rem;
   font-size: 1.1rem;
-  font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
-    Bitstream Vera Sans Mono, Courier New, monospace;
+  font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New,
+    monospace;
 }
 
 .grid {
@@ -119,4 +114,38 @@
     width: 100%;
     flex-direction: column;
   }
+}
+
+.grid {
+  display: grid;
+}
+
+.grid {
+  display: grid;
+  row-gap: 10px;
+  column-gap: 10px;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid .item {
+  width: 250px;
+  padding: 10px;
+}
+
+.grid .item:hover {
+  background-color: #e6f7ff;
+}
+
+.grid img {
+  object-fit: contain;
+  width: 250px;
+  height: 300px;
+}
+
+.header {
+  background-image: url('http://www.pentaport.co.kr/kor/images/main_img1.jpg');
+  background-size: cover;
+  background-position: center;
+  width: 100%;
+  height: 500px;
 }
