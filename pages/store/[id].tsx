@@ -1,7 +1,9 @@
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
-import React from 'react'
+import React, { FormEvent, useState } from 'react'
 import { Helmet } from 'react-helmet'
+import Modal from 'react-modal'
+
 import Layout from '../../components/Layout'
 import { Menu, Store } from '../../types/model'
 
@@ -10,8 +12,40 @@ interface Props {
 }
 
 export default function StorePage({ store }: Props) {
-  const handleMenuClick = (menu: Menu) => {}
+  const [visibleOrderModal, setVisibleOrderModal] = useState(false)
+  const [selectedMenu, setSelectedMenu] = useState<Menu | null>(null)
+  const [orderUsername, setOrderUsername] = useState('')
 
+  const handleMenuClick = (menu: Menu) => {
+    setVisibleOrderModal(true)
+    setSelectedMenu(menu)
+  }
+  const handleOrder = async (e: FormEvent) => {
+    e.preventDefault()
+    try {
+      const res = await fetch('https://pentaport2020foods.roto.codes/orders', {
+        method: 'POST',
+        body: JSON.stringify({
+          username: orderUsername,
+          menu: selectedMenu.id,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (res.ok) {
+        setVisibleOrderModal(false)
+        setSelectedMenu(null)
+
+        alert('주문완료!')
+      } else {
+        alert('주문 실패! 로토를 갈궈보세요.')
+      }
+    } catch (e) {
+      alert(e.message)
+    }
+  }
   return (
     <Layout>
       <Helmet>
@@ -24,6 +58,54 @@ export default function StorePage({ store }: Props) {
         <meta property="og:description" content="먹어보고 말해! 츄라이츄라이!" />
         <meta property="og:image" content={`https://pentaport2020foods.roto.codes${store.storeImage.url}`} />
       </Helmet>
+      {visibleOrderModal && selectedMenu && (
+        <Modal
+          isOpen={visibleOrderModal}
+          style={{
+            content: {
+              maxWidth: 500,
+              width: '100%',
+              top: '50%',
+              left: '50%',
+              right: 'auto',
+              bottom: 'auto',
+              marginRight: '-50%',
+              transform: 'translate(-50%, -50%)',
+            },
+          }}
+        >
+          <h2>주문 확인</h2>
+          <div>
+            <strong>주문하시겠습니까? 메뉴명: {selectedMenu.name}</strong>
+          </div>
+          <form onSubmit={handleOrder}>
+            <div>
+              <input
+                style={{
+                  width: '100%',
+                  fontSize: 40,
+                }}
+                placeholder="주문자 이름을 적어주세요"
+                onChange={e => setOrderUsername(e.target.value)}
+              />
+            </div>
+            <div>
+              <button style={{ width: '100%' }} type="submit">
+                주문하기
+              </button>
+            </div>
+          </form>
+          <button
+            disabled={orderUsername.length === 0}
+            onClick={() => {
+              setVisibleOrderModal(false)
+              setSelectedMenu(null)
+            }}
+          >
+            취소
+          </button>
+        </Modal>
+      )}
       <h1>{store.title}</h1>
       <div style={{ display: 'flex', width: '100%', maxWidth: 1000, flexDirection: 'row' }}>
         <div>

@@ -20,4 +20,5 @@ export interface Order {
   id: string
   username: string
   menu: Menu
+  createdAt: string
 }

@@ -20,15 +20,24 @@ export default function OrdersPage() {
   return (
     <Layout>
       <h1>주문내역</h1>
-      <ul>
-        {orders.map(order => (
-          <li key={order.id}>
-            <div>
-              메뉴명: {order.menu.name} / 주문자: {order.username}
-            </div>
-          </li>
-        ))}
-      </ul>
+      <table>
+        <thead>
+          <tr>
+            <th>메뉴명</th>
+            <th>주문자</th>
+            <th>주문시간</th>
+          </tr>
+        </thead>
+        <tbody>
+          {orders.map(order => (
+            <tr key={order.id}>
+              <td>{order.menu.name}</td>
+              <td>{order.username}</td>
+              <td>{order.createdAt}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </Layout>
   )
 }
