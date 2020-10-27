@@ -14,6 +14,8 @@ export interface Menu {
 
 export interface Image {
   url: string
+  width: number
+  height: number
 }
 
 export interface Order {

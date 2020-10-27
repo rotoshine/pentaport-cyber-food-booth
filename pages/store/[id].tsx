@@ -147,7 +147,12 @@ export default function StorePage({ store }: Props) {
           }
         `}
       >
-        <div>
+        <div
+          css={css`
+            width: ${store.storeImage.width}px;
+            height: ${store.storeImage.height}px;
+          `}
+        >
           <img
             css={css`
               width: 100%;
